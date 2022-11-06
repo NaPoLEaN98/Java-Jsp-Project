@@ -1,0 +1,33 @@
+package com.met.edu;
+
+import java.sql.*;
+import java.util.*;
+
+public class EmployeeBean implements java.io.Serializable{
+ private String id;
+ private String password;
+
+  public final String getId() {return id;}
+  public final void setId(String value){ id = value;}
+
+  public final String getPassword() {return id;}
+  public final void setPassword(String value){ id = value;}
+
+  public boolean authenticate () throws SQLException {
+   try(var con = DB.getConnection()){
+        var stmt = con.prepareStatement("select count(id) from admin WHERE id=? and pwd=?");
+	stmt.setString(1,id);
+	stmt.setString(2,password);
+
+	var rs = stmt.executeQuery();
+	rs.next();
+	int count = rs.getInt(1);
+	rs.close();
+	stmt.close();
+	if (count == 1)
+		return true;
+	id = password = null;
+	return false;
+   }
+  }
+}
